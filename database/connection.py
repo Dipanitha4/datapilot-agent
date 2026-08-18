@@ -2,9 +2,9 @@
 database/connection.py
 Manages PostgreSQL and Redis connections for the Travel AI Agent.
 Uses connection pooling for PostgreSQL and a singleton pattern for Redis.
+All configuration is read from config.py — no credentials here.
 """
 
-import os
 import logging
 from contextlib import contextmanager
 from typing import Generator
@@ -13,27 +13,21 @@ import redis
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import QueuePool
-from dotenv import load_dotenv
 
-load_dotenv()
+from config import settings
 
 logger = logging.getLogger(__name__)
 
-# ─── PostgreSQL Configuration ─────────────────────────────────────────────────
-
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:travelai2026@localhost:5432/travel_ai"
-)
+# ─── PostgreSQL ───────────────────────────────────────────────────────────────
 
 engine = create_engine(
-    DATABASE_URL,
+    settings.DATABASE_URL,
     poolclass=QueuePool,
-    pool_size=10,           # number of connections to keep open
-    max_overflow=20,        # extra connections allowed beyond pool_size
-    pool_pre_ping=True,     # verify connection is alive before using it
-    pool_recycle=3600,      # recycle connections after 1 hour
-    echo=False,             # set True to log all SQL queries (debug only)
+    pool_size=10,
+    max_overflow=20,
+    pool_pre_ping=True,
+    pool_recycle=3600,
+    echo=False,
 )
 
 SessionLocal = sessionmaker(
@@ -45,14 +39,7 @@ SessionLocal = sessionmaker(
 
 @contextmanager
 def get_db() -> Generator[Session, None, None]:
-    """
-    Context manager for database sessions.
-    Automatically commits on success and rolls back on error.
-    
-    Usage:
-        with get_db() as db:
-            result = db.execute(text("SELECT 1"))
-    """
+    """Context manager for database sessions."""
     db = SessionLocal()
     try:
         yield db
@@ -66,14 +53,7 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def get_db_session() -> Generator[Session, None, None]:
-    """
-    Returns a database session for dependency injection in FastAPI.
-    
-    Usage in FastAPI:
-        @app.get("/")
-        def route(db: Session = Depends(get_db_session)):
-            ...
-    """
+    """Returns a database session for dependency injection in FastAPI."""
     db = SessionLocal()
     try:
         yield db
@@ -82,7 +62,6 @@ def get_db_session() -> Generator[Session, None, None]:
 
 
 def check_postgres_connection() -> bool:
-    """Verify PostgreSQL connection is working."""
     try:
         with get_db() as db:
             db.execute(text("SELECT 1"))
@@ -93,24 +72,19 @@ def check_postgres_connection() -> bool:
         return False
 
 
-# ─── Redis Configuration ──────────────────────────────────────────────────────
-
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
+# ─── Redis ────────────────────────────────────────────────────────────────────
 
 _redis_client = None
 
 
 def get_redis_client() -> redis.Redis:
-    """
-    Returns a Redis client singleton.
-    Creates the connection on first call, reuses on subsequent calls.
-    """
+    """Returns a Redis client singleton."""
     global _redis_client
     if _redis_client is None:
         _redis_client = redis.from_url(
-            REDIS_URL,
-            decode_responses=True,      # return strings instead of bytes
-            socket_connect_timeout=5,   # fail fast if Redis is down
+            settings.REDIS_URL,
+            decode_responses=True,
+            socket_connect_timeout=5,
             socket_timeout=5,
             retry_on_timeout=True,
         )
@@ -118,10 +92,8 @@ def get_redis_client() -> redis.Redis:
 
 
 def check_redis_connection() -> bool:
-    """Verify Redis connection is working."""
     try:
-        client = get_redis_client()
-        client.ping()
+        get_redis_client().ping()
         logger.info("Redis connection successful")
         return True
     except Exception as e:
@@ -132,10 +104,6 @@ def check_redis_connection() -> bool:
 # ─── Health Check ─────────────────────────────────────────────────────────────
 
 def check_all_connections() -> dict:
-    """
-    Check all database connections and return status.
-    Used by the API health endpoint.
-    """
     return {
         "postgresql": check_postgres_connection(),
         "redis": check_redis_connection(),

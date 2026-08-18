@@ -6,7 +6,7 @@ Every other module imports from this file — never use os.getenv() directly.
 Secrets have no defaults — they must be set in .env file.
 """
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 from functools import lru_cache
 
@@ -67,11 +67,13 @@ class Settings(BaseSettings):
     POINTS_TO_USD_RATE: float = Field(default=0.25)
     MAX_CONVERSATION_HISTORY: int = Field(default=10)
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = True
-        extra = "ignore"
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+        extra="ignore",
+    )
+
 
 
 @lru_cache()
