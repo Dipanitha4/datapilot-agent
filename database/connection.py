@@ -65,7 +65,7 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
-def get_db_session() -> Session:
+def get_db_session() -> Generator[Session, None, None]:
     """
     Returns a database session for dependency injection in FastAPI.
     
