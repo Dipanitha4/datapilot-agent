@@ -726,7 +726,7 @@ def seed_all():
         logger.info(f"  ✅ {len(claims)} claims created")
 
     logger.info("")
-    logger.info("🎉 Database seeding complete!")
+    logger.info("Database seeding complete!")
     logger.info(f"   Customers:          {len(customers)}")
     logger.info(f"   Flights:            {len(flights)}")
     logger.info(f"   Hotels:             {len(hotels)}")
