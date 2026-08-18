@@ -736,6 +736,3 @@ def seed_all():
     logger.info(f"   Payments:           {len(payments)}")
     logger.info(f"   Claims:             {len(claims)}")
 
-
-if __name__ == "__main__":
-    seed_all()

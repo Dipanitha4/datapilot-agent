@@ -323,7 +323,3 @@ def create_tables(engine):
     Base.metadata.create_all(bind=engine)
     print("✅ All tables created successfully")
 
-
-if __name__ == "__main__":
-    from database.connection import engine
-    create_tables(engine)

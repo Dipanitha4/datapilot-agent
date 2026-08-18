@@ -140,13 +140,3 @@ def check_all_connections() -> dict:
         "postgresql": check_postgres_connection(),
         "redis": check_redis_connection(),
     }
-
-
-# ─── Run directly to test connections ─────────────────────────────────────────
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    print("Testing database connections...")
-    status = check_all_connections()
-    print(f"PostgreSQL: {'✅ Connected' if status['postgresql'] else '❌ Failed'}")
-    print(f"Redis:      {'✅ Connected' if status['redis'] else '❌ Failed'}")
