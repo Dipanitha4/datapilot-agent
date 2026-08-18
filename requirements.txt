@@ -1,0 +1,58 @@
+# ─── LLM & Agent Framework ───────────────────────────────────────────────────
+langchain==0.3.7
+langchain-community==0.3.7
+langchain-groq==0.2.1
+langchain-text-splitters==0.3.8
+langgraph==0.2.53
+langchain-mcp-adapters==0.1.4
+
+# ─── LLM Providers ───────────────────────────────────────────────────────────
+groq==0.11.0
+ollama==0.6.2
+
+# ─── MCP ─────────────────────────────────────────────────────────────────────
+fastmcp==2.3.4
+mcp==1.29.0
+
+# ─── Database ────────────────────────────────────────────────────────────────
+psycopg2-binary==2.9.10
+pgvector==0.3.6
+sqlalchemy==2.0.35
+alembic==1.14.0
+redis==5.2.1
+
+# ─── Embeddings ──────────────────────────────────────────────────────────────
+sentence-transformers==3.3.1
+
+# ─── API Layer ───────────────────────────────────────────────────────────────
+fastapi==0.115.5
+uvicorn==0.32.1
+starlette==0.41.3
+pydantic==2.13.4
+pydantic-settings==2.15.0
+python-multipart==0.0.12
+
+# ─── Frontend ────────────────────────────────────────────────────────────────
+streamlit==1.40.1
+
+# ─── Safety / PII ────────────────────────────────────────────────────────────
+presidio-analyzer==2.2.356
+presidio-anonymizer==2.2.356
+spacy==3.8.3
+
+# ─── Observability ───────────────────────────────────────────────────────────
+langsmith==0.1.147
+opentelemetry-api==1.27.0
+opentelemetry-sdk==1.27.0
+opentelemetry-exporter-otlp==1.27.0
+opentelemetry-instrumentation-fastapi==0.48b0
+
+# ─── Utilities ───────────────────────────────────────────────────────────────
+python-dotenv==1.0.1
+requests==2.32.3
+httpx==0.28.1
+faker==33.1.0
+
+# ─── Testing ─────────────────────────────────────────────────────────────────
+pytest==8.3.3
+pytest-asyncio==0.24.0
